@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Directorio de Medios de Monterrey</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header {
+      background: #1a2a41;
+      color: white;
+      padding: 1.5rem 0;
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+    }
+
+    header nav a:hover {
+      color: #47a3f5;
+    }
+
+    /* Hero Section */
+    .hero {
+      background-color: #f4f4f4;
+      padding: 80px 0;
+      text-align: center;
+    }
+
+    .hero h2 {
+      font-size: 3rem;
+      color: #1a2a41;
+    }
+
+    .hero-text p {
+      font-size: 1.25rem;
+      color: #555;
+      margin-top: 10px;
+    }
+
+    .hero .btn-primary {
+      background-color: #1a2a41;
+      color: white;
+      padding: 15px 30px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .hero .btn-primary:hover {
+      background-color: #274875;
+    }
+
+    /* Directorio Section */
+    #directorio {
+      background-color: #ffffff;
+      padding: 60px 0;
+      text-align: center;
+    }
+
+    #directorio h2 {
+      font-size: 2.5rem;
+      color: #1a2a41;
+    }
+
+    .search {
+      margin-bottom: 30px;
+    }
+
+    .search input {
+      padding: 15px;
+      width: 50%;
+      max-width: 300px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .search button {
+      padding: 15px 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #1a2a41;
+      color: white;
+      cursor: pointer;
+    }
+
+    .search button:hover {
+      background-color: #274875;
+    }
+
+    .categories button {
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .categories button:hover {
+      background-color: #1a2a41;
+      color: white;
+    }
+
+    .media-list .medio {
+      background-color: white;
+      padding: 20px;
+      margin: 20px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .media-list .medio h3 {
+      margin: 0;
+      color: #1a2a41;
+    }
+
+    /* Mapa Section */
+    #map {
+      height: 400px;
+      width: 100%;
+      margin-top: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Footer */
+    footer {
+      background-color: #1a2a41;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    footer p {
+      margin: 0;
+    }
+
+    /* Estilo botón Ver en el Mapa */
+    .ver-en-mapa {
+      background-color: #1a2a41;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .ver-en-mapa:hover {
+      background-color: #274875;
+    }
+
+    button.ver-en-web {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    button.ver-en-web:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <h1>Directorio de Medios</h1>
+      <nav>
+        <a href="#home">Inicio</a>
+        <a href="#directorio">Directorio</a>
+        <a href="#mapa">Mapa</a>
+        <a href="#registro">Registro</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero">
+    <div class="container">
+      <div class="hero-text">
+        <h2>Explora los Medios de Monterrey</h2>
+        <p>Descubre los medios de comunicación más destacados de la región.</p>
+        <button class="btn-primary" onclick="scrollToSection('directorio')">Ver Directorio</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Directorio -->
+  <section id="directorio" class="section">
+    <div class="container">
+      <h2>Directorio</h2>
+      <div class="search">
+        <input type="text" id="searchInput" placeholder="Buscar un medio..." oninput="buscarSugerencias()">
+        <button class="btn-primary" onclick="buscarMedio()">Buscar</button>
+      </div>
+      <div id="sugerencias" class="suggestions"></div>
+      <div class="categories">
+        <button onclick="filtrarCategoria('radio')">Radio</button>
+        <button onclick="filtrarCategoria('tv')">TV</button>
+        <button onclick="filtrarCategoria('periodico')">Periódicos</button>
+        <button onclick="filtrarCategoria('digital')">Digital</button>
+      </div>
+      <div id="listaMedios" class="media-list">
+        <!-- Medios cargados dinámicamente -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Mapa -->
+  <section id="mapa" class="section">
+    <div class="container">
+      <h2>Mapa Interactivo</h2>
+      <div id="map"></div>
+    </div>
+  </section>
+
+  <!-- Registro -->
+  <section id="registro" class="section">
+    <div class="container">
+      <h2>Registra tu Medio</h2>
+      <form id="formularioRegistro" onsubmit="validarFormulario(event)">
+        <input type="text" id="nombre" name="nombre" placeholder="Nombre del medio" required>
+        <input type="text" id="direccion" name="direccion" placeholder="Dirección" required>
+        <select id="categoria" name="categoria" required>
+          <option value="">Selecciona la categoría</option>
+          <option value="radio">Radio</option>
+          <option value="tv">TV</option>
+          <option value="periodico">Periódico</option>
+          <option value="digital">Digital</option>
+        </select>
+        <textarea id="descripcion" name="descripcion" placeholder="Descripción del medio" required></textarea>
+        <button type="submit">Registrar</button>
+      </form>
+      <div class="error-message" id="mensajeError"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2024 Directorio de Medios Monterrey</p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    let medios = [
+  {
+    nombre: "98.5 FM Radio Nuevo León",
+    categoria: "radio",
+    direccion: "Av. Alfonso Reyes, Monterrey, NL",
+    horario: "Lunes a Domingo: 6:00 AM - 10:00 PM",
+    tipo: "Radio FM",
+    descripcion: "Estación de radio local de Monterrey, ofreciendo música variada.",
+    lat: 25.6700,
+    lon: -100.3100,
+    web: "http://www.radio98.com.mx"
+  },
+  {
+    nombre: "Televisa Monterrey",
+    categoria: "tv",
+    direccion: "Av. Pino Suárez 139, Monterrey, NL",
+    horario: "Lunes a Domingo: 7:00 AM - 12:00 AM",
+    tipo: "Canal de Televisión",
+    descripcion: "Canal de televisión regional, con noticias y entretenimiento.",
+    lat: 25.6710,
+    lon: -100.3140,
+    web: "https://www.televisa.com/tv/monterrey"
+  },
+  {
+    nombre: "El Norte",
+    categoria: "periodico",
+    direccion: "Calle 15 de Mayo 1, Monterrey, NL",
+    horario: "Lunes a Viernes: 9:00 AM - 6:00 PM",
+    tipo: "Periódico Impreso",
+    descripcion: "Periódico regional de Monterrey con noticias locales e internacionales.",
+    lat: 25.6660,
+    lon: -100.3090,
+    web: "https://www.elnorte.com"
+  },
+  {
+    nombre: "MetroNoticias",
+    categoria: "digital",
+    direccion: "Online",
+    horario: "24 horas",
+    tipo: "Medio Digital",
+    descripcion: "Medio digital independiente con noticias en tiempo real.",
+    lat: 25.6715,
+    lon: -100.3150,
+    web: "https://www.metronews.com"
+  },
+  {
+    nombre: "Telediario Monterrey",
+    categoria: "tv",
+    direccion: "Av. Diego Díaz de Berlanga 3600, Monterrey, NL",
+    horario: "Lunes a Domingo: 6:00 AM - 11:30 PM",
+    tipo: "Canal de Noticias",
+    descripcion: "Canal de televisión dedicado a noticias de Monterrey y Nuevo León.",
+    lat: 25.6780,
+    lon: -100.3085,
+    web: "https://telediario.mx"
+  },
+  {
+    nombre: "La Afición",
+    categoria: "digital",
+    direccion: "Online",
+    horario: "24 horas",
+    tipo: "Medio Digital Deportivo",
+    descripcion: "Medio digital especializado en deportes locales e internacionales.",
+    lat: 25.6718,
+    lon: -100.3120,
+    web: "https://www.mediotiempo.com"
+  }
+
+  
+];
+
+
+    let map = L.map('map').setView([25.6700, -100.3100], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    function buscarMedio() {
+      let input = document.getElementById('searchInput').value.toLowerCase();
+      let listaMedios = document.getElementById('listaMedios');
+      listaMedios.innerHTML = '';
+      let filteredMedios = medios.filter(medio => medio.nombre.toLowerCase().includes(input));
+      filteredMedios.forEach(medio => {
+        let medioHTML = `<div class="medio">
+                            <h3>${medio.nombre}</h3>
+                            <p>${medio.descripcion}</p>
+                            <button class="ver-en-mapa" onclick="verEnMapa(${medio.lat}, ${medio.lon}, '${medio.nombre}')">Ver en el Mapa</button>
+                            <button class="ver-en-web" onclick="verEnWeb('${medio.web}')">Ver en Web</button>
+                          </div>`;
+        listaMedios.innerHTML += medioHTML;
+      });
+    }
+
+    function verEnMapa(lat, lon, nombre) {
+      map.setView([lat, lon], 14);
+      L.marker([lat, lon]).addTo(map)
+        .bindPopup(`<b>${nombre}</b><br>Ubicación: ${lat}, ${lon}`)
+        .openPopup();
+    }
+
+    function verEnWeb(url) {
+      window.open(url, '_blank');
+    }
+
+    function buscarSugerencias() {
+      let input = document.getElementById('searchInput').value.toLowerCase();
+      let sugerencias = medios.filter(medio => medio.nombre.toLowerCase().includes(input));
+      let sugerenciasHTML = sugerencias.map(medio => `<p>${medio.nombre}</p>`).join('');
+      document.getElementById('sugerencias').innerHTML = sugerenciasHTML;
+    }
+
+    function filtrarCategoria(categoria) {
+      let filteredMedios = medios.filter(medio => medio.categoria === categoria);
+      mostrarMedios(filteredMedios);
+    }
+
+    function mostrarMedios(mediosFiltrados) {
+      let listaMedios = document.getElementById('listaMedios');
+      listaMedios.innerHTML = '';
+      mediosFiltrados.forEach(medio => {
+        let medioHTML = `<div class="medio">
+                            <h3>${medio.nombre}</h3>
+                            <p>${medio.descripcion}</p>
+                            <button class="ver-en-mapa" onclick="verEnMapa(${medio.lat}, ${medio.lon}, '${medio.nombre}')">Ver en el Mapa</button>
+                            <button class="ver-en-web" onclick="verEnWeb('${medio.web}')">Ver en Web</button>
+                          </div>`;
+        listaMedios.innerHTML += medioHTML;
+      });
+    }
+
+    function scrollToSection(sectionId) {
+      document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+    }
+
+  </script>
+</body>
+</html>
